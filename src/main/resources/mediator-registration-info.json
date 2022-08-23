@@ -1,0 +1,33 @@
+{
+  "urn": "urn:uuid:4ee90d70-228e-11ed-a7cc-df9f592b4e96",
+  "version": "0.1.0",
+  "name": "esrs-mediator-ctc3",
+  "description": "A mediator to handle integrations between CTC3 and ESRS",
+  "endpoints": [
+    {
+      "name": "esrs-mediator-ctc3 Route",
+      "host": "localhost",
+      "port": "3050",
+      "path": "/esrs-request",
+      "type": "http"
+    }
+  ],
+  "defaultChannelConfig": [
+    {
+      "name": "esrs-mediator-ctc3",
+      "urlPattern": "^/esrs-request$",
+      "type": "http",
+      "allow": ["esrs-mediator-ctc3"],
+      "routes": [
+        {
+          "name": "esrs-mediator-ctc3 Route",
+          "host": "localhost",
+          "port": "3050",
+          "path": "/esrs-request",
+          "type": "http",
+          "primary": "true"
+        }
+      ]
+    }
+  ]
+}
