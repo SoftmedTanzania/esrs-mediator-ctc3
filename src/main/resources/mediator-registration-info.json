@@ -1,7 +1,7 @@
 {
   "urn": "urn:uuid:3412e80a-cf23-4a8d-a7fe-2647a9baf590",
   "version": "0.1.0",
-  "name": "esrs-mediator-ctc3",
+  "name": "CTC3 - ESRS Mediator",
   "description": "A mediator to handle integrations between CTC3 and ESRS",
   "endpoints": [
     {
@@ -78,14 +78,14 @@
         },
         {
           "param": "destinationRequestPath",
-          "displayName": "Destination Path",
-          "description": "The destination path",
+          "displayName": "Destination Test Request Path",
+          "description": "The destination test request path",
           "type": "string"
         },
         {
           "param": "destinationManifestPath",
-          "displayName": "Destination Path",
-          "description": "The destination path",
+          "displayName": "Destination Manifest Path",
+          "description": "The destination manifest path",
           "type": "string"
         },
         {
