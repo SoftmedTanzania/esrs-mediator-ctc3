@@ -1,4 +1,4 @@
-# dhis2-mediator-elmis
+# ESRS-Mediator-CTC3
 
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/eb9fc4b8ee9849d5bd7c6a76bdb33995)](https://app.codacy.com/gh/SoftmedTanzania/dhis2-mediator-elmis?utm_source=github.com&utm_medium=referral&utm_content=SoftmedTanzania/dhis2-mediator-elmis&utm_campaign=Badge_Grade_Settings)
