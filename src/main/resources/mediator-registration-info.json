@@ -1,31 +1,115 @@
 {
-  "urn": "urn:uuid:4ee90d70-228e-11ed-a7cc-df9f592b4e96",
+  "urn": "urn:uuid:3412e80a-cf23-4a8d-a7fe-2647a9baf590",
   "version": "0.1.0",
   "name": "esrs-mediator-ctc3",
   "description": "A mediator to handle integrations between CTC3 and ESRS",
   "endpoints": [
     {
-      "name": "esrs-mediator-ctc3 Route",
+      "name": "esrs-mediator-ctc3 Generic Route",
+      "host": "localhost",
+      "port": "3050",
+      "path": "/esrs-mediator",
+      "type": "http"
+    },
+    {
+      "name": "esrs-mediator-ctc3 Request Route",
       "host": "localhost",
       "port": "3050",
       "path": "/esrs-request",
+      "type": "http"
+    },
+    {
+      "name": "esrs-mediator-ctc3 Manifest Route",
+      "host": "localhost",
+      "port": "3050",
+      "path": "/esrs-manifest",
       "type": "http"
     }
   ],
   "defaultChannelConfig": [
     {
-      "name": "esrs-mediator-ctc3",
+      "name": "CTC3 - ESRS Request Channel",
       "urlPattern": "^/esrs-request$",
       "type": "http",
-      "allow": ["esrs-mediator-ctc3"],
+      "allow": [
+        "esrs-role"
+      ],
       "routes": [
         {
-          "name": "esrs-mediator-ctc3 Route",
+          "name": "ESRS Mediator Request Route",
           "host": "localhost",
           "port": "3050",
           "path": "/esrs-request",
           "type": "http",
           "primary": "true"
+        }
+      ]
+    },
+    {
+      "name": "CTC3 - ESRS Manifest Channel",
+      "urlPattern": "^/esrs-manifest$",
+      "type": "http",
+      "allow": [
+        "esrs-role"
+      ],
+      "routes": [
+        {
+          "name": "ESRS Mediator Manifest Route",
+          "host": "localhost",
+          "port": "3050",
+          "path": "/esrs-manifest",
+          "type": "http",
+          "primary": "true"
+        }
+      ]
+    }
+  ],
+  "configDefs": [
+    {
+      "param": "destinationConnectionProperties",
+      "displayName": "Destination Connection Properties",
+      "description": "Configuration to set the hostname, port and path for the destination server",
+      "type": "struct",
+      "template": [
+        {
+          "param": "destinationHost",
+          "displayName": "Destination Host Name",
+          "description": "IP address/hostname of the destination server. e.g 192.168.1.1",
+          "type": "string"
+        },
+        {
+          "param": "destinationPort",
+          "displayName": "Destination Port Number",
+          "description": "The port number of the destination server. e.g 8080",
+          "type": "number"
+        },
+        {
+          "param": "destinationPath",
+          "displayName": "Destination Path",
+          "description": "The destination path",
+          "type": "string"
+        },
+        {
+          "param": "destinationScheme",
+          "displayName": "Destination Scheme",
+          "description": "Whether the destination is using HTTP or HTTPS requests.",
+          "type": "option",
+          "values": [
+            "http",
+            "https"
+          ]
+        },
+        {
+          "param": "destinationUsername",
+          "displayName": "Destination Username",
+          "description": "The destination username for receiving data from the HIM.",
+          "type": "string"
+        },
+        {
+          "param": "destinationPassword",
+          "displayName": "Destination Password",
+          "description": "The destination password for receiving data from the HIM.",
+          "type": "password"
         }
       ]
     }
