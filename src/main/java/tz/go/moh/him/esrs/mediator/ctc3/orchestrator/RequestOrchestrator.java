@@ -6,6 +6,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPResponse;
+import tz.go.moh.him.esrs.mediator.ctc3.utils.Constants;
 import tz.go.moh.him.mediator.core.domain.ErrorMessage;
 import tz.go.moh.him.mediator.core.domain.ResultDetail;
 import tz.go.moh.him.mediator.core.validator.DateValidatorUtils;
@@ -192,7 +193,7 @@ public class RequestOrchestrator extends BaseOrchestrator {
                     validatedRequest = validateData(request);
                 }
 
-                sendDataToESRS(new Gson().toJson(validatedRequest));
+                sendDataToESRS(new Gson().toJson(validatedRequest), Constants.REQUEST);
 
             } catch (Exception e) {
                 //In-case of an exception creating an error message with the stack trace

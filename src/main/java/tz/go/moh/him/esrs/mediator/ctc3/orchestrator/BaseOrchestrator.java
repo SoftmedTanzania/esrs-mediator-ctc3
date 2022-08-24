@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
+import tz.go.moh.him.esrs.mediator.ctc3.utils.Constants;
 import tz.go.moh.him.mediator.core.domain.ErrorMessage;
 import tz.go.moh.him.mediator.core.serialization.JsonSerializer;
 import java.io.IOException;
@@ -94,7 +95,7 @@ public abstract class BaseOrchestrator extends UntypedActor{
      *
      * @param msg to be sent
      */
-    public void sendDataToESRS(String msg) {
+    public void sendDataToESRS(String msg, String messageType) {
         if (!errorMessages.isEmpty()) {
             FinishRequest finishRequest = new FinishRequest(new Gson().toJson(errorMessages), "text/json", HttpStatus.SC_BAD_REQUEST);
             (workingRequest).getRequestHandler().tell(finishRequest, getSelf());
@@ -116,7 +117,17 @@ public abstract class BaseOrchestrator extends UntypedActor{
 
                 host = config.getProperty("destination.host");
                 portNumber = Integer.parseInt(config.getProperty("destination.api.port"));
-                path = config.getProperty("destination.api.path");
+                switch (messageType) {
+                    case Constants.REQUEST:
+                        path = config.getProperty("destination.api.path.request");
+                        break;
+                    case Constants.MANIFEST:
+                        path = config.getProperty("destination.api.path.forecast_accuracy_per_program");
+                        break;
+                    default:
+                        path = null;
+                        break;
+                }
             } else {
                 JSONObject connectionProperties = new JSONObject(config.getDynamicConfig()).getJSONObject("destinationConnectionProperties");
 
@@ -130,8 +141,19 @@ public abstract class BaseOrchestrator extends UntypedActor{
 
                 host = connectionProperties.getString("destinationHost");
                 portNumber = connectionProperties.getInt("destinationPort");
-                path = connectionProperties.getString("destinationPath");
                 scheme = connectionProperties.getString("destinationScheme");
+
+                switch (messageType) {
+                    case Constants.REQUEST:
+                        path = connectionProperties.getString("destinationRequestPath");
+                        break;
+                    case Constants.MANIFEST:
+                        path = connectionProperties.getString("destinationManifestPath");
+                        break;
+                    default:
+                        path = null;
+                        break;
+                }
             }
 
             List<Pair<String, String>> params = new ArrayList<>();

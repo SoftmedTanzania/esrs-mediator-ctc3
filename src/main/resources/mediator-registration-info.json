@@ -5,13 +5,6 @@
   "description": "A mediator to handle integrations between CTC3 and ESRS",
   "endpoints": [
     {
-      "name": "esrs-mediator-ctc3 Generic Route",
-      "host": "localhost",
-      "port": "3050",
-      "path": "/esrs-mediator",
-      "type": "http"
-    },
-    {
       "name": "esrs-mediator-ctc3 Request Route",
       "host": "localhost",
       "port": "3050",
@@ -32,7 +25,7 @@
       "urlPattern": "^/esrs-request$",
       "type": "http",
       "allow": [
-        "esrs-role"
+        "ctc3-role"
       ],
       "routes": [
         {
@@ -50,7 +43,7 @@
       "urlPattern": "^/esrs-manifest$",
       "type": "http",
       "allow": [
-        "esrs-role"
+        "ctc3-role"
       ],
       "routes": [
         {
@@ -84,7 +77,13 @@
           "type": "number"
         },
         {
-          "param": "destinationPath",
+          "param": "destinationRequestPath",
+          "displayName": "Destination Path",
+          "description": "The destination path",
+          "type": "string"
+        },
+        {
+          "param": "destinationManifestPath",
           "displayName": "Destination Path",
           "description": "The destination path",
           "type": "string"

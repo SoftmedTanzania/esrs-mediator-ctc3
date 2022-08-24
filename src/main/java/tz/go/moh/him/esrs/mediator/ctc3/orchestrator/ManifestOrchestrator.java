@@ -7,6 +7,7 @@ import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPResponse;
 import tz.go.moh.him.esrs.mediator.ctc3.domain.Request;
+import tz.go.moh.him.esrs.mediator.ctc3.utils.Constants;
 import tz.go.moh.him.mediator.core.domain.ErrorMessage;
 import tz.go.moh.him.mediator.core.domain.ResultDetail;
 import tz.go.moh.him.mediator.core.validator.DateValidatorUtils;
@@ -146,7 +147,7 @@ public class ManifestOrchestrator extends BaseOrchestrator {
                     validatedManifest = validateData(manifest);
                 }
 
-                sendDataToESRS(new Gson().toJson(validatedManifest));
+                sendDataToESRS(new Gson().toJson(validatedManifest), Constants.MANIFEST);
 
             } catch (Exception e) {
                 //In-case of an exception creating an error message with the stack trace
