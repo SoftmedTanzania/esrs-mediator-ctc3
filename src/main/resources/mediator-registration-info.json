@@ -8,49 +8,24 @@
       "name": "esrs-mediator-ctc3 Request Route",
       "host": "localhost",
       "port": "3050",
-      "path": "/esrs-request",
-      "type": "http"
-    },
-    {
-      "name": "esrs-mediator-ctc3 Manifest Route",
-      "host": "localhost",
-      "port": "3050",
-      "path": "/esrs-manifest",
+      "path": "/samples",
       "type": "http"
     }
   ],
   "defaultChannelConfig": [
     {
-      "name": "CTC3 - ESRS Request Channel",
-      "urlPattern": "^/esrs-request$",
+      "name": "CTC3 - ESRS Send Test Requests Channel",
+      "urlPattern": "^/ctc3-esrs-test-requests$",
       "type": "http",
       "allow": [
         "ctc3-role"
       ],
       "routes": [
         {
-          "name": "ESRS Mediator Request Route",
+          "name": "CTC3 - ESRS Send Test Requests Route",
           "host": "localhost",
           "port": "3050",
-          "path": "/esrs-request",
-          "type": "http",
-          "primary": "true"
-        }
-      ]
-    },
-    {
-      "name": "CTC3 - ESRS Manifest Channel",
-      "urlPattern": "^/esrs-manifest$",
-      "type": "http",
-      "allow": [
-        "ctc3-role"
-      ],
-      "routes": [
-        {
-          "name": "ESRS Mediator Manifest Route",
-          "host": "localhost",
-          "port": "3050",
-          "path": "/esrs-manifest",
+          "path": "/samples",
           "type": "http",
           "primary": "true"
         }
@@ -83,12 +58,6 @@
           "type": "string"
         },
         {
-          "param": "destinationManifestPath",
-          "displayName": "Destination Manifest Path",
-          "description": "The destination manifest path",
-          "type": "string"
-        },
-        {
           "param": "destinationScheme",
           "displayName": "Destination Scheme",
           "description": "Whether the destination is using HTTP or HTTPS requests.",
@@ -112,5 +81,15 @@
         }
       ]
     }
-  ]
+  ],
+  "config": {
+    "destinationConnectionProperties": {
+      "destinationHost": "127.0.0.1",
+      "destinationPort": "80",
+      "destinationRequestPath": "/sample_path",
+      "destinationScheme": "http",
+      "destinationUsername": "username",
+      "destinationPassword":"password"
+    }
+  }
 }
