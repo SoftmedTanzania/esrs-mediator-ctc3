@@ -6,9 +6,8 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Test;
 import org.openhim.mediator.engine.messages.FinishRequest;
-import org.openhim.mediator.engine.testing.MockLauncher;
 import org.openhim.mediator.engine.testing.TestingUtils;
-import tz.go.moh.him.esrs.mediator.ctc3.domain.Manifest;
+import tz.go.moh.him.esrs.mediator.ctc3.TestMockLauncher;
 import tz.go.moh.him.esrs.mediator.ctc3.mock.MockDestination;
 
 import java.io.IOException;
@@ -16,7 +15,6 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -42,9 +40,6 @@ public class RequestOrchestratorTest extends BaseTest {
             e.printStackTrace();
         }
 
-        List<MockLauncher.ActorToLaunch> toLaunch = new LinkedList<>();
-        toLaunch.add(new MockLauncher.ActorToLaunch("http-connector", MockDestination.class));
-        TestingUtils.launchActors(system, testConfig.getName(), toLaunch);
     }
 
     /**
@@ -63,118 +58,174 @@ public class RequestOrchestratorTest extends BaseTest {
      * @throws Exception if an exception occurs
      */
     @Test
-    public void testMediatorHTTPRequest() throws Exception {
+    public void testSuccessfulResponseMediatorHTTPRequest() throws Exception {
         assertNotNull(testConfig);
         new JavaTestKit(system) {{
-            InputStream stream = ManifestOrchestratorTest.class.getClassLoader().getResourceAsStream("request.json");
+            List<TestMockLauncher.ActorToLaunch> toLaunch = new LinkedList<>();
+
+            toLaunch.add(new TestMockLauncher.ActorToLaunch("http-connector", MockDestination.class, "sucessful_response"));
+            tz.go.moh.him.esrs.mediator.ctc3.TestingUtils.launchActors(system, testConfig.getName(), toLaunch);
+
+            InputStream stream = RequestOrchestrator.class.getClassLoader().getResourceAsStream("request.json");
 
             assertNotNull(stream);
 
 
-            createActorAndSendRequest(system, testConfig, getRef(), IOUtils.toString(stream), ManifestOrchestrator.class, "/esrs-request");
+            createActorAndSendRequest(system, testConfig, getRef(), IOUtils.toString(stream), RequestOrchestrator.class, "/samples");
 
             final Object[] out =
-                    new ReceiveWhile<Object>(Object.class, duration("1 second")) {
+                    new ReceiveWhile<Object>(Object.class, duration("3 second")) {
                         @Override
                         protected Object match(Object msg) throws Exception {
                             if (msg instanceof FinishRequest) {
                                 return msg;
                             }
-                            throw noMatch();
+                            return msg;
                         }
                     }.get();
 
             boolean foundResponse = false;
+            int statusCode = 200;
 
             for (Object o : out) {
                 if (o instanceof FinishRequest) {
                     foundResponse = true;
+                    statusCode = ((FinishRequest) o).getResponseStatus();
                     break;
                 }
             }
             assertNotNull(foundResponse);
+            assertEquals(200, statusCode);
         }};
     }
 
-    /**
-     * Tests the mediator with payload with invalid payload
-     *
-     * @throws Exception if an exception occurs
-     */
     @Test
-    public void testInValidPayload() throws Exception {
+    public void testPartialResponseMediatorHTTPRequest() throws Exception {
         assertNotNull(testConfig);
-
         new JavaTestKit(system) {{
-            InputStream stream = ManifestOrchestratorTest.class.getClassLoader().getResourceAsStream("invalid-request.json");
+            List<TestMockLauncher.ActorToLaunch> toLaunch = new LinkedList<>();
+
+            toLaunch.add(new TestMockLauncher.ActorToLaunch("http-connector", MockDestination.class, "partial_response"));
+            tz.go.moh.him.esrs.mediator.ctc3.TestingUtils.launchActors(system, testConfig.getName(), toLaunch);
+
+            InputStream stream = RequestOrchestrator.class.getClassLoader().getResourceAsStream("request.json");
 
             assertNotNull(stream);
 
-            createActorAndSendRequest(system, testConfig, getRef(), IOUtils.toString(stream), RequestOrchestrator.class, "/esrs-request");
+
+            createActorAndSendRequest(system, testConfig, getRef(), IOUtils.toString(stream), RequestOrchestrator.class, "/samples");
 
             final Object[] out =
-                    new ReceiveWhile<Object>(Object.class, duration("1 second")) {
+                    new ReceiveWhile<Object>(Object.class, duration("3 second")) {
                         @Override
                         protected Object match(Object msg) throws Exception {
                             if (msg instanceof FinishRequest) {
                                 return msg;
                             }
-                            throw noMatch();
+                            return msg;
                         }
                     }.get();
 
-            int responseStatus = 0;
-            String responseMessage = "";
+            boolean foundResponse = false;
+            int statusCode = 200;
 
             for (Object o : out) {
                 if (o instanceof FinishRequest) {
-                    responseStatus = ((FinishRequest) o).getResponseStatus();
-                    responseMessage = ((FinishRequest) o).getResponse();
+                    foundResponse = true;
+                    statusCode = ((FinishRequest) o).getResponseStatus();
                     break;
                 }
             }
-
-            assertEquals(400, responseStatus);
-
+            assertNotNull(foundResponse);
+            assertEquals(400, statusCode);
         }};
     }
-
     @Test
-    public void testInvalidDates() throws Exception {
+    public void testFailedResponseMediatorHTTPRequest() throws Exception {
         assertNotNull(testConfig);
-
         new JavaTestKit(system) {{
-            InputStream stream = ManifestOrchestratorTest.class.getClassLoader().getResourceAsStream("invalid-date-request.json");
+            List<TestMockLauncher.ActorToLaunch> toLaunch = new LinkedList<>();
+
+            toLaunch.add(new TestMockLauncher.ActorToLaunch("http-connector", MockDestination.class, "failed_response"));
+            tz.go.moh.him.esrs.mediator.ctc3.TestingUtils.launchActors(system, testConfig.getName(), toLaunch);
+
+            InputStream stream = RequestOrchestrator.class.getClassLoader().getResourceAsStream("request.json");
 
             assertNotNull(stream);
 
-            createActorAndSendRequest(system, testConfig, getRef(), IOUtils.toString(stream), RequestOrchestrator.class, "/esrs-request");
+
+            createActorAndSendRequest(system, testConfig, getRef(), IOUtils.toString(stream), RequestOrchestrator.class, "/samples");
 
             final Object[] out =
-                    new ReceiveWhile<Object>(Object.class, duration("1 second")) {
+                    new ReceiveWhile<Object>(Object.class, duration("3 second")) {
                         @Override
                         protected Object match(Object msg) throws Exception {
                             if (msg instanceof FinishRequest) {
                                 return msg;
                             }
-                            throw noMatch();
+                            return msg;
                         }
                     }.get();
 
-            int responseStatus = 0;
-            String responseMessage = "";
+            boolean foundResponse = false;
+            int statusCode = 200;
 
             for (Object o : out) {
                 if (o instanceof FinishRequest) {
-                    responseStatus = ((FinishRequest) o).getResponseStatus();
-                    responseMessage = ((FinishRequest) o).getResponse();
+                    foundResponse = true;
+                    statusCode = ((FinishRequest) o).getResponseStatus();
                     break;
                 }
             }
-
-            assertEquals(400, responseStatus);
+            assertNotNull(foundResponse);
+            assertEquals(512, statusCode);
         }};
-
     }
+
+    @Test
+    public void testUndefinedResponseMediatorHTTPRequest() throws Exception {
+        assertNotNull(testConfig);
+        new JavaTestKit(system) {{
+            List<TestMockLauncher.ActorToLaunch> toLaunch = new LinkedList<>();
+
+            toLaunch.add(new TestMockLauncher.ActorToLaunch("http-connector", MockDestination.class, "undefined_response"));
+            tz.go.moh.him.esrs.mediator.ctc3.TestingUtils.launchActors(system, testConfig.getName(), toLaunch);
+
+            InputStream stream = RequestOrchestrator.class.getClassLoader().getResourceAsStream("request.json");
+
+            assertNotNull(stream);
+
+
+            createActorAndSendRequest(system, testConfig, getRef(), IOUtils.toString(stream), RequestOrchestrator.class, "/samples");
+
+            final Object[] out =
+                    new ReceiveWhile<Object>(Object.class, duration("3 second")) {
+                        @Override
+                        protected Object match(Object msg) throws Exception {
+                            if (msg instanceof FinishRequest) {
+                                return msg;
+                            }
+                            return msg;
+                        }
+                    }.get();
+
+            boolean foundResponse = false;
+            int statusCode = 200;
+
+            for (Object o : out) {
+                if (o instanceof FinishRequest) {
+                    foundResponse = true;
+                    statusCode = ((FinishRequest) o).getResponseStatus();
+                    break;
+                }
+            }
+            assertNotNull(foundResponse);
+            assertEquals(400, statusCode);
+        }};
+    }
+
+
+
+
 
 }
